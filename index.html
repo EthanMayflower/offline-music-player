@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Local Music Player</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="player-panel" aria-label="Current song">
+        <div class="cover-wrap">
+          <img id="coverArt" class="cover-art" alt="" />
+          <div id="coverFallback" class="cover-fallback" aria-hidden="true">♪</div>
+        </div>
+        <div class="now-playing">
+          <p class="eyebrow">Now playing</p>
+          <h1 id="songTitle">Choose your music</h1>
+          <p id="songCreator">Upload local MP3 files to begin</p>
+          <p id="albumName" class="album-name"></p>
+        </div>
+        <div class="progress-block">
+          <div class="time-row"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
+          <input id="progress" type="range" min="0" max="1000" value="0" aria-label="Song progress" />
+        </div>
+        <div class="controls" aria-label="Playback controls">
+          <button id="shuffleBtn" class="icon-btn" type="button" aria-label="Shuffle" title="Shuffle"><span aria-hidden="true">⇄</span></button>
+          <button id="prevBtn" class="icon-btn" type="button" aria-label="Previous song" title="Previous"><span aria-hidden="true">‹‹</span></button>
+          <button id="playBtn" class="play-btn" type="button" aria-label="Play" title="Play"><span id="playIcon" aria-hidden="true">▶</span></button>
+          <button id="nextBtn" class="icon-btn" type="button" aria-label="Next song" title="Next"><span aria-hidden="true">››</span></button>
+          <label class="volume-control" title="Volume"><span aria-hidden="true">Vol</span><input id="volume" type="range" min="0" max="1" value="0.85" step="0.01" aria-label="Volume" /></label>
+        </div>
+        <audio id="audio"></audio>
+      </section>
+      <section class="library-panel" aria-label="Music library">
+        <div class="library-head">
+          <div><p class="eyebrow">Library</p><h2>Your local songs</h2></div>
+          <label class="upload-btn"><input id="fileInput" type="file" accept="audio/mpeg,audio/mp3,.mp3" multiple />Add MP3s</label>
+        </div>
+        <div id="dropZone" class="drop-zone"><strong>Drop MP3 files here</strong><span>or use Add MP3s above</span></div>
+        <div class="stats-row" aria-label="Playlist statistics">
+          <div><span>Total songs</span><strong id="totalSongs">0</strong></div>
+          <div><span>Storage</span><strong id="totalStorage">0.00 GB</strong></div>
+          <div><span>Playtime</span><strong id="totalPlaytime">0 min</strong></div>
+        </div>
+        <div class="search-row"><input id="searchInput" type="search" placeholder="Search title, creator, or album" aria-label="Search songs" /><select id="sortSelect" aria-label="Sort songs"><option value="title">Title A-Z / #</option><option value="artist">Artist A-Z / #</option><option value="duration">Duration longest</option></select><span id="songCount" class="song-count">0 songs</span></div>
+        <ol id="songList" class="song-list" aria-label="Songs"></ol>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
