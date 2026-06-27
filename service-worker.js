@@ -1,4 +1,4 @@
-const CACHE_NAME = 'local-music-player-v2';
+const CACHE_NAME = 'local-music-player-v3-cache-first';
 const APP_SHELL = [
   './',
   './index.html',
@@ -28,6 +28,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Cache first: serve cached app files immediately, fetch only when missing.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
