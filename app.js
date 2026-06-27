@@ -1,3 +1,12 @@
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch((error) => {
+      console.warn('Service worker registration failed:', error);
+    });
+  });
+}
+
 const audio = document.querySelector("#audio");
 const fileInput = document.querySelector("#fileInput");
 const dropZone = document.querySelector("#dropZone");
