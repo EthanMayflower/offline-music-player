@@ -1,4 +1,4 @@
-const CACHE_NAME = 'local-music-player-v4-offline-first';
+const CACHE_NAME = 'local-music-player-v1-offline-first';
 const APP_SHELL = [
   './',
   './index.html',
