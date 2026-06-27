@@ -1,4 +1,4 @@
-const CACHE_NAME = 'local-music-player-v4-cache-first';
+const CACHE_NAME = 'local-music-player-v4-offline-first';
 const APP_SHELL = [
   './',
   './index.html',
@@ -13,7 +13,7 @@ const APP_SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
+      .then((cache) => Promise.allSettled(APP_SHELL.map((url) => cache.add(url))))
       .then(() => self.skipWaiting())
   );
 });
@@ -28,19 +28,29 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Cache first: serve cached app files immediately, fetch only when missing.
+// Offline first: use anything already cached and avoid touching the network on reload.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-        return response;
-      }).catch(() => caches.match('./index.html'));
-    })
-  );
+  event.respondWith(getCachedResponse(event.request));
 });
+
+async function getCachedResponse(request) {
+  const cache = await caches.open(CACHE_NAME);
+
+  if (request.mode === 'navigate') {
+    const cachedPage = await cache.match('./index.html') || await cache.match('./');
+    if (cachedPage) return cachedPage;
+  }
+
+  const cached = await caches.match(request, { ignoreSearch: true });
+  if (cached) return cached;
+
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) await cache.put(request, response.clone());
+    return response;
+  } catch {
+    return await cache.match('./index.html') || Response.error();
+  }
+}
