@@ -140,7 +140,9 @@ async function loadSong(id, shouldPlay) {
   const song = state.songs.find((candidate) => candidate.id === id);
   if (!song) return;
   state.currentId = song.id;
+  audio.pause();
   audio.src = song.audioUrl;
+  audio.load();
   songTitle.textContent = song.title;
   songCreator.textContent = song.artist;
   albumName.textContent = song.album;
@@ -192,8 +194,20 @@ function updateProgress() {
 function setupMediaSession() {
   if (!("mediaSession" in navigator)) return;
 
-  setMediaSessionAction("play", () => togglePlayback());
-  setMediaSessionAction("pause", () => audio.pause());
+  setMediaSessionAction("play", async () => {
+      try {
+          await audio.play();
+          updateMediaSessionPlaybackState();
+          updateMediaSessionPosition();
+      } catch (err) {
+          console.error(err);
+      }
+  });
+
+  setMediaSessionAction("pause", () => {
+      audio.pause();
+  });
+  
   setMediaSessionAction("previoustrack", () => playRelative(-1));
   setMediaSessionAction("nexttrack", () => playRelative(1));
   setMediaSessionAction("stop", () => {
